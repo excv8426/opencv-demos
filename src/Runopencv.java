@@ -9,6 +9,6 @@ public class Runopencv {
 	    NumberUtils.numberstrain();
 	    NumberUtils.numberstest();*/
 		
-		DFT.cal();
+		DFT.idft();
 	}
 }

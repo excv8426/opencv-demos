@@ -12,7 +12,7 @@ import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
 public class DFT {
-	public static void cal(){
+	public static void idft(){
 		Mat img1=dft("E:\\39.jpg");
 		Mat img2=dft("E:\\40.bmp");
 		
