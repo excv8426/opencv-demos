@@ -1,3 +1,5 @@
+import java.util.Collections;
+
 import org.opencv.core.Core;
 import number.DFT;
 
@@ -8,7 +10,9 @@ public class Runopencv {
 	    System.out.println( "mat = " + mat.dump() );
 	    NumberUtils.numberstrain();
 	    NumberUtils.numberstest();*/
+		DFT.randShuffletest();
 		
-		DFT.idft();
+		
+		
 	}
 }

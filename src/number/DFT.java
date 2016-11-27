@@ -3,6 +3,7 @@ package number;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -43,4 +44,51 @@ public class DFT {
 		Core.split(complexI, dftimg);
 		return complexI;
 	}
+	
+	private static List<Swap> randShuffle(Mat mat){
+		int rows=mat.rows();
+		Mat mat1d=mat.reshape(0, 1);
+		int size=mat1d.cols();
+		Random random=new Random();
+		double [] tem;
+		List<Swap> swaps=new ArrayList<>();
+		for (int i = 0; i < mat1d.cols(); i++) {
+			Swap swap=new Swap(i, random.nextInt(size));
+			tem=mat1d.get(0, i);
+			mat1d.put(0, i, mat1d.get(0, swap.getJ()));
+			mat1d.put(0, swap.getJ(), tem);
+			swaps.add(swap);
+		}
+		mat=mat1d.reshape(0, rows);
+		return swaps;
+
+	}
+	
+	private static void reShuffle(Mat mat,List<Swap> swaps){
+		int rows=mat.rows();
+		Mat mat1d=mat.reshape(0, 1);
+		int size=mat1d.cols();
+		double [] tem;
+		Swap swap;
+		for (int i = swaps.size()-1; i > -1; i--) {
+			swap=swaps.get(i);
+			tem=mat1d.get(0, swap.getI());
+			mat1d.put(0, swap.getI(), mat1d.get(0, swap.getJ()));
+			mat1d.put(0, swap.getJ(), tem);
+		}
+		mat=mat1d.reshape(0, rows);
+	}
+	
+	public static void randShuffletest(){
+		Mat img1=Highgui.imread("E:\\40.bmp");
+		List<Swap> swaps=randShuffle(img1);
+		//reShuffle(img1,swaps);
+		/*reShuffle(img1,swaps);
+		reShuffle(img1,swaps);*/
+		Highgui.imwrite("D:\\51.jpg", img1);
+	}
+	
+	
+	
+	
 }
