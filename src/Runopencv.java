@@ -10,8 +10,8 @@ public class Runopencv {
 	    System.out.println( "mat = " + mat.dump() );
 	    NumberUtils.numberstrain();
 	    NumberUtils.numberstest();*/
-		DFT.randShuffletest();
-		
+		//DFT.toImage("D:\\39.jpg","D:\\391.jpg");
+		DFT.idft();
 		
 		
 	}

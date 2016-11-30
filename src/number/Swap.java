@@ -1,6 +1,13 @@
 package number;
 
-public class Swap {
+import java.io.Serializable;
+
+public class Swap implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8847531990453731923L;
+	
 	private int i;
 	private int j;
 	
