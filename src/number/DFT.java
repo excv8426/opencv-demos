@@ -1,9 +1,5 @@
 package number;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,33 +15,7 @@ import org.opencv.imgproc.Imgproc;
 
 public class DFT {
 	public static void idft(){
-		Mat img1=dft("D:\\input\\6941baebgw1f81l86emh0j208c06omxb.jpg");
-		//Mat img2=dft("E:\\40.bmp");
 		
-		//Mat img3=new Mat(img2.size(),CvType.CV_32F);
-		//Core.add(img1, img2, img3);
-		//Core.dft(img3, img3,Core.DFT_SCALE , 0);
-		//img1.convertTo(img1, CvType.CV_8U);
-		
-		List<Mat> mats=new ArrayList<>();
-		Core.split(img1, mats);
-		Mat re=mats.get(0);
-		Mat im=mats.get(1);
-		re.convertTo(re, CvType.CV_8UC3);
-		Highgui.imwrite("D:\\output\\6941baebgw1f81l86emh0j208c06omxb0.jpg", re);
-		Highgui.imwrite("D:\\output\\6941baebgw1f81l86emh0j208c06omxb1.jpg", im);
-		Mat in=Highgui.imread("D:\\output\\6941baebgw1f81l86emh0j208c06omxb0.jpg");
-		//in.convertTo(in, CvType.CV_32FC1);
-		
-		System.out.println(CvType.typeToString(re.type()));
-		System.out.println(CvType.typeToString(in.type()));
-		System.out.println(re.size());
-		System.out.println(in.size());
-		
-		for (int i = 0; i < 240; i++) {
-			System.out.println(re.get(0, i)[0]+"***"+in.get(0, i)[1]);
-			//System.out.println(in.get(0, i));
-		}
 	}
 	
 	public static void toImage(String complexi,String complexj){
@@ -144,27 +114,47 @@ public class DFT {
 		Highgui.imwrite("D:\\51.jpg", img1);
 	}
 	
-	public static void mark(String image,String mark,String output){
-		Mat img1=dft(image);
-		Mat img2=Highgui.imread(mark,Highgui.CV_LOAD_IMAGE_GRAYSCALE);
-		List<Swap> swaps=randShuffle(img2);
-		Highgui.imwrite("D:\\randShuffle\\randShuffle.jpg", img2);
-		img2=dft("D:\\randShuffle\\randShuffle.jpg");
-		Mat img3=new Mat(img2.size(),CvType.CV_32F);
-		Core.add(img1, img2, img3);
-		Core.dft(img3, img3,Core.DFT_SCALE , 0);
+	public static void mark(){
+		Mat img1=dft("D:\\input\\39.jpg");
+		Mat img2=Highgui.imread("D:\\input\\mark.jpg",Highgui.CV_LOAD_IMAGE_GRAYSCALE);
 		List<Mat> mats=new ArrayList<>();
-		Core.split(img3, mats);
-		Highgui.imwrite(output, mats.get(0));
+		Core.split(img1, mats);
+		Mat re=mats.get(0);
+		Mat im=mats.get(1);
+		img2.convertTo(img2, CvType.CV_32FC1);
+
+		for (int i = 0; i < 100; i++) {
+			Core.add(re, img2, re);
+		}
 		
-		try(FileOutputStream outputStream=new FileOutputStream("message.data");
-				ObjectOutputStream objectOutputStream=new ObjectOutputStream(outputStream);) {
-				objectOutputStream.writeObject(swaps);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		//Core.add(im, img2, im);
+		Highgui.imwrite("D:\\output\\390mark.jpg", re);
+		Highgui.imwrite("D:\\output\\391mark.jpg", im);
+		
+		Mat img3=new Mat(img2.size(),CvType.CV_32F);
+		Core.merge(Arrays.asList(re,im), img3);
+		Core.dft(img3, img3,Core.DFT_SCALE , 0);
+		
+		Core.split(img3, mats);
+		Highgui.imwrite("D:\\output\\390marked.jpg", mats.get(0));
+		Highgui.imwrite("D:\\output\\391marked.jpg", mats.get(1));
+	}
+	
+	public static void readMark(){
+		Mat img1=dft("D:\\output\\390marked.jpg");
+		Mat img2=dft("D:\\input\\39.jpg");
+		List<Mat> img1s=new ArrayList<>();
+		List<Mat> img2s=new ArrayList<>();
+		
+		Core.split(img1, img1s);
+		Core.split(img2, img2s);
+		Mat mark=new Mat(img2.size(),CvType.CV_32FC2);;
+		Core.subtract(img1s.get(0), img2s.get(0), mark);
+		
+		
+		Highgui.imwrite("C:\\Users\\Yuki\\1.jpg", img1s.get(0));
+		Highgui.imwrite("C:\\Users\\Yuki\\2.jpg", img2s.get(0));
+		Highgui.imwrite("D:\\output\\readmark.jpg", mark);
 	}
 	
 	
