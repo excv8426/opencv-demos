@@ -1,13 +1,13 @@
-import java.util.Collections;
-
 import org.opencv.core.Core;
-import number.DFT;
+import number.RecognizeNumber;
 
 public class Runopencv {
 	public static void main( String[] args ){
 		System.loadLibrary( Core.NATIVE_LIBRARY_NAME );
-		DFT.mark();
-		DFT.readMark();
+		//RecognizeNumber.numberstrain();
+		RecognizeNumber.numbersread();
+		/*DFT.mark();
+		DFT.readMark();*/
 		
 	}
 }
