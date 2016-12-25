@@ -13,10 +13,7 @@ import org.opencv.core.Scalar;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
-public class DFT {
-	public static void idft(){
-		
-	}
+public class DigitalMark {
 	
 	public static void toImage(String complexi,String complexj){
 		Mat img1=Highgui.imread(complexi,Highgui.CV_LOAD_IMAGE_GRAYSCALE);
@@ -114,47 +111,38 @@ public class DFT {
 		Highgui.imwrite("D:\\51.jpg", img1);
 	}
 	
-	public static void mark(){
-		Mat img1=dft("D:\\input\\39.jpg");
-		Mat img2=Highgui.imread("D:\\input\\mark.jpg",Highgui.CV_LOAD_IMAGE_GRAYSCALE);
+	public static void mark(String original,String mark,String output){
+		Mat img1=dft(original);
+		Mat img2=Highgui.imread(mark,Highgui.CV_LOAD_IMAGE_GRAYSCALE);
 		List<Mat> mats=new ArrayList<>();
 		Core.split(img1, mats);
 		Mat re=mats.get(0);
 		Mat im=mats.get(1);
 		img2.convertTo(img2, CvType.CV_32FC1);
-
 		for (int i = 0; i < 100; i++) {
 			Core.add(re, img2, re);
+			Core.add(im, img2, im);
 		}
-		
-		//Core.add(im, img2, im);
-		Highgui.imwrite("D:\\output\\390mark.jpg", re);
-		Highgui.imwrite("D:\\output\\391mark.jpg", im);
-		
+		//Highgui.imwrite("D:\\output\\390mark.jpg", re);
+		//Highgui.imwrite("D:\\output\\391mark.jpg", im);
 		Mat img3=new Mat(img2.size(),CvType.CV_32F);
 		Core.merge(Arrays.asList(re,im), img3);
 		Core.dft(img3, img3,Core.DFT_SCALE , 0);
-		
 		Core.split(img3, mats);
-		Highgui.imwrite("D:\\output\\390marked.jpg", mats.get(0));
-		Highgui.imwrite("D:\\output\\391marked.jpg", mats.get(1));
+		Highgui.imwrite(output, mats.get(0));
+		//Highgui.imwrite("D:\\output\\391marked.jpg", mats.get(1));
 	}
 	
-	public static void readMark(){
-		Mat img1=dft("D:\\output\\390marked.jpg");
-		Mat img2=dft("D:\\input\\39.jpg");
+	public static void readMark(String marked,String mark,String output){
+		Mat img1=dft(marked);
+		Mat img2=dft(mark);
 		List<Mat> img1s=new ArrayList<>();
-		List<Mat> img2s=new ArrayList<>();
-		
+		List<Mat> img2s=new ArrayList<>();	
 		Core.split(img1, img1s);
 		Core.split(img2, img2s);
-		Mat mark=new Mat(img2.size(),CvType.CV_32FC2);;
-		Core.subtract(img1s.get(0), img2s.get(0), mark);
-		
-		
-		Highgui.imwrite("C:\\Users\\Yuki\\1.jpg", img1s.get(0));
-		Highgui.imwrite("C:\\Users\\Yuki\\2.jpg", img2s.get(0));
-		Highgui.imwrite("D:\\output\\readmark.jpg", mark);
+		Mat readmark=new Mat(img2.size(),CvType.CV_32FC2);;
+		Core.subtract(img1s.get(0), img2s.get(0), readmark);
+		Highgui.imwrite(output, readmark);
 	}
 	
 	
