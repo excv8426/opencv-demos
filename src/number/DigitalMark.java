@@ -68,6 +68,22 @@ public class DigitalMark {
 		return complexI;
 	}
 	
+	
+	public static Mat dft(Mat imported){
+		Mat padded = new Mat(); 
+		int m =Core.getOptimalDFTSize(imported.rows());
+		int n =Core.getOptimalDFTSize(imported.cols());
+		Imgproc.copyMakeBorder(imported, padded, 0, m-imported.rows(), 0, n-imported.cols(), Imgproc.BORDER_CONSTANT, Scalar.all(0));
+		Mat complexI=new Mat(padded.size(),CvType.CV_32F);
+		padded.convertTo(padded, CvType.CV_32F);
+		Mat[] planes={padded,new Mat(padded.size(), CvType.CV_32F, Scalar.all(0))};
+		Core.merge(Arrays.asList(planes), complexI);
+		Core.dft(complexI, complexI);
+		List<Mat> dftimg=new ArrayList<>();
+		Core.split(complexI, dftimg);
+		return complexI;
+	}
+	
 	private static List<Swap> randShuffle(Mat mat){
 		int rows=mat.rows();
 		Mat mat1d=mat.reshape(0, 1);
@@ -132,6 +148,8 @@ public class DigitalMark {
 		Highgui.imwrite(output, mats.get(0));
 		//Highgui.imwrite("D:\\output\\391marked.jpg", mats.get(1));
 	}
+	
+	
 	
 	public static void readMark(String marked,String mark,String output){
 		Mat img1=dft(marked);
