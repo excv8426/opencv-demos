@@ -163,7 +163,30 @@ public class DigitalMark {
 		Highgui.imwrite(output, readmark);
 	}
 	
-	
+	public static void colourdMark(String original,String mark,String output){
+		Mat markmat=Highgui.imread(mark,Highgui.CV_LOAD_IMAGE_GRAYSCALE);
+		markmat.convertTo(markmat, CvType.CV_32FC1);
+		Mat imported=Highgui.imread(original);
+		List<Mat> importeds=new ArrayList<>();
+		Core.split(imported, importeds);
+		List<Mat> spectrums=new ArrayList<>();
+		Mat spectrum=dft(importeds.get(0));
+		List<Mat> mats=new ArrayList<>();
+		Core.split(spectrum, mats);
+		for (int j = 0; j < 100; j++) {
+			Core.add(mats.get(0), markmat, mats.get(0));
+			Core.add(mats.get(1), markmat, mats.get(1));
+		}
+		Core.merge(mats, spectrum);
+		Core.dft(spectrum, spectrum,Core.DFT_SCALE , 0);
+		Core.split(spectrum, spectrums);
+		importeds.set(0, spectrums.get(0));
+		spectrums.get(0).convertTo(spectrums.get(0), CvType.CV_8UC1);
+		Core.flip(spectrums.get(0), spectrums.get(0), -1);
+		System.out.println(CvType.typeToString(spectrums.get(0).type()));
+		Core.merge(importeds, imported);
+		Highgui.imwrite(output, imported);
+	}
 	
 	
 }
