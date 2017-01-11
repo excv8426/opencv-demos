@@ -14,6 +14,7 @@ import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
 public class DigitalMark {
+	private static int chanel=2;
 	
 	public static void toImage(String complexi,String complexj){
 		Mat img1=Highgui.imread(complexi,Highgui.CV_LOAD_IMAGE_GRAYSCALE);
@@ -38,7 +39,6 @@ public class DigitalMark {
 		Core.pow(re, 2, re);
 		Core.pow(im, 2, im);
 		Core.add(re, im, im);
-		
 		Core.pow(im, 0.5, im);
 		Highgui.imwrite("D:\\recover2.jpg", im);
 		MinMaxLocResult minMaxLocResult=Core.minMaxLoc(im);
@@ -158,7 +158,7 @@ public class DigitalMark {
 		List<Mat> img2s=new ArrayList<>();	
 		Core.split(img1, img1s);
 		Core.split(img2, img2s);
-		Mat readmark=new Mat(img2.size(),CvType.CV_32FC2);;
+		Mat readmark=new Mat(img2.size(),CvType.CV_32FC2);
 		Core.subtract(img1s.get(0), img2s.get(0), readmark);
 		Highgui.imwrite(output, readmark);
 	}
@@ -170,22 +170,41 @@ public class DigitalMark {
 		List<Mat> importeds=new ArrayList<>();
 		Core.split(imported, importeds);
 		List<Mat> spectrums=new ArrayList<>();
-		Mat spectrum=dft(importeds.get(0));
+		Mat spectrum=dft(importeds.get(chanel));
 		List<Mat> mats=new ArrayList<>();
 		Core.split(spectrum, mats);
-		for (int j = 0; j < 100; j++) {
+		for (int j = 0; j < 1000; j++) {
 			Core.add(mats.get(0), markmat, mats.get(0));
 			Core.add(mats.get(1), markmat, mats.get(1));
 		}
 		Core.merge(mats, spectrum);
 		Core.dft(spectrum, spectrum,Core.DFT_SCALE , 0);
 		Core.split(spectrum, spectrums);
-		importeds.set(0, spectrums.get(0));
+		importeds.set(chanel, spectrums.get(0));
 		spectrums.get(0).convertTo(spectrums.get(0), CvType.CV_8UC1);
 		Core.flip(spectrums.get(0), spectrums.get(0), -1);
 		System.out.println(CvType.typeToString(spectrums.get(0).type()));
 		Core.merge(importeds, imported);
 		Highgui.imwrite(output, imported);
+	}
+	
+	public static void readColourdMark(String marked,String original,String output){
+		Mat colourmarked=Highgui.imread(marked);
+		Mat colouroriginal=Highgui.imread(original);
+		List<Mat> markedMats=new ArrayList<>();
+		List<Mat> originalMats=new ArrayList<>();
+		Core.split(colourmarked, markedMats);
+		Core.split(colouroriginal, originalMats);
+		Mat markedSpectrum=dft(markedMats.get(chanel));
+		Mat originalSpectrum=dft(originalMats.get(chanel));
+		
+		List<Mat> markedSpectrums=new ArrayList<>();
+		List<Mat> originalSpectrums=new ArrayList<>();	
+		Core.split(markedSpectrum, markedSpectrums);
+		Core.split(originalSpectrum, originalSpectrums);
+		Mat readmark=new Mat(originalSpectrum.size(),CvType.CV_32FC2);
+		Core.subtract(markedSpectrums.get(0), originalSpectrums.get(0), readmark);
+		Highgui.imwrite(output, readmark);
 	}
 	
 	
